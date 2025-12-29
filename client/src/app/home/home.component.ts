@@ -399,6 +399,26 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+
+// 3. El método que llama tu botón
+  toggleMenuFromParent() {
+  console.log('1. Click recibido');
+    console.log('2. Valor de this.sidenav:', this.sidenav);
+
+    if (this.sidenav) {
+        this.sidenav.toggleSidenav();
+        this.changeDetector.detectChanges();
+    } else {
+        console.error('ERROR: this.sidenav es undefined. Falta el [sidenav]="..." en el HTML del padre.');
+    }
+
+  }
+
+
+
+
+
+
    private loadHmi() {
         let hmi = this.projectService.getHmi();
         if (hmi) {

@@ -19,5 +19,19 @@
       "target": "http://127.0.0.1:1881",
       "secure": false,
       "changeOrigin": true
-    }
+    },
+  "/api": {
+    "target": "http://localhost:1881",
+    "secure": false
+  },
+  "/socket.io": {
+    "target": "http://localhost:1881",
+    "secure": false,
+    "ws": true
+  },
+  "/images": {
+    "target": "http://localhost:1881",
+    "secure": false
+  }
+
 }

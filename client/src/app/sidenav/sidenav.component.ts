@@ -13,6 +13,8 @@ import { Utils } from '../_helpers/utils';
     templateUrl: './sidenav.component.html',
     styleUrls: ['./sidenav.component.scss']
 })
+
+
 export class SidenavComponent implements AfterContentChecked {
 
     @Input() sidenav: MatSidenav;
@@ -23,6 +25,7 @@ export class SidenavComponent implements AfterContentChecked {
     viewAsAlarms = LinkType.alarms;
 
     logo = null;
+    isCollapsed = false;
     layout: LayoutSettings = null;
     showSidenav = false;
     layoutNavigation = new NavigationSettings();
@@ -40,6 +43,17 @@ export class SidenavComponent implements AfterContentChecked {
         this.showSidenav = (this.layout) ? true : false;
         this.changeDetector.detectChanges();
     }
+
+ toggleSidenav(): void {
+    // Si estamos en modo móvil ('over' o 'push'), seguimos usando el comportamiento original de abrir/cerrar
+    if (this.sidenav && (this.sidenav.mode === 'over' || this.sidenav.mode === 'push')) {
+        this.sidenav.toggle();
+    } else {
+        // En modo escritorio ('side'), alternamos entre expandido y colapsado (solo iconos)
+        this.isCollapsed = !this.isCollapsed;
+    }
+    this.changeDetector.detectChanges();
+}
 
     onGoTo(item: NaviItem) {
         if (this.location.path().startsWith('/home/')) {

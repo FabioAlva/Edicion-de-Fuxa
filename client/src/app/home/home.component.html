@@ -1,31 +1,114 @@
 <div style="display: flex; flex-direction: column; height: 100vh; width: 100vw; overflow: hidden;">
 
-    <div style="flex: 0 0 60px; background: #ffffff; z-index: 10;">
-        <div *ngIf="showNavigation" class="header" [style.background-color]="layoutHeader.bkcolor" [style.color]="layoutHeader.fgcolor" style="height: 100%;">
-            <div #header class="items" [style.textAlign]="layoutHeader.itemsAnchor">
-                <ng-container *ngFor="let item of layoutHeader.items; let i = index" [ngSwitch]="item.type">
-                    <ng-container *ngSwitchCase="'button'">
-                        <button mat-raised-button [id]="item.id" [style.background-color]="item.bkcolor" [style.color]="item.fgcolor">
-                            <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon> {{ item.text }}
-                        </button>
-                    </ng-container>
-                </ng-container>
-            </div>
+    <div style="flex: 0 0 60px; background: #ffffff;">
+        <div *ngIf="showNavigation" class="header" [style.background-color]="layoutHeader.bkcolor" [style.color]="layoutHeader.fgcolor">
 
-            <div class="header-button">
-                 <div class="alarm-layout" style="min-width: 40px;">
-                    <button mat-icon-button *ngIf="alarms.show" (click)="onAlarmsShowMode('collapse')">
-                        <mat-icon>notifications_none</mat-icon>
-                        <div class="button-counter alarm-color">{{alarms.count}}</div>
+                <button (click)="toggleMenuFromParent()" style="background-color: aqua;">
+                    Menu
                     </button>
-                </div>
-            </div>
-        </div>
+
+            <div #header class="items" [style.textAlign]="layoutHeader.itemsAnchor">
+				<ng-container *ngFor="let item of layoutHeader.items; let i = index" [ngSwitch]="item.type">
+					<ng-container *ngSwitchCase="'button'">
+						<button mat-raised-button
+								[id]="item.id"
+								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor"
+								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
+								[style.fontFamily]="layoutHeader.fontFamily"
+								[style.fontSize]="layoutHeader.fontSize + 'px !important'"
+								[style.marginLeft.px]="item.marginLeft"
+								[style.marginRight.px]="item.marginRight">
+								<mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
+							{{ item.text ?? item.type }}
+						</button>
+					</ng-container>
+					<ng-container *ngSwitchCase="'label'">
+						<button mat-button
+								[id]="item.id"
+								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor"
+								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
+								[style.fontFamily]="layoutHeader.fontFamily"
+								[style.fontSize]="layoutHeader.fontSize + 'px !important'"
+								[style.marginLeft.px]="item.marginLeft"
+								[style.marginRight.px]="item.marginRight">
+							{{ item.text ?? item.type }}
+						</button>
+					</ng-container>
+					<ng-container *ngSwitchCase="'image'">
+						<button mat-icon-button
+								[id]="item.id"
+								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor"
+								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
+								[style.marginLeft.px]="item.marginLeft"
+								[style.marginRight.px]="item.marginRight">
+							<mat-icon>{{ item.icon }}</mat-icon>
+						</button>
+					</ng-container>
+				</ng-container>
+			</div>
+			<div class="header-button">
+				<div class="alarm-layout" style="min-width: 40px;">
+					<button mat-icon-button *ngIf="alarms.show" (click)="onAlarmsShowMode('collapse')">
+						<mat-icon aria-label="Alarms">notifications_none</mat-icon>
+						<div class="button-counter alarm-color" [style.opacity]="alarms.count?'':'0'">{{alarms.count}}</div>
+					</button>
+				</div>
+				<div class="info-layout" style="min-width: 40px;">
+					<button mat-icon-button *ngIf="infos.show" (click)="onAlarmsShowMode('collapse')">
+						<mat-icon aria-label="Info">error_outline</mat-icon>
+						<div class="button-counter info-color" [style.opacity]="infos.count?'':'0'">{{infos.count}}</div>
+					</button>
+				</div>
+				<div class="header-date-time" *ngIf="layoutHeader.dateTimeDisplay">
+                    {{ currentDateTime | date: layoutHeader.dateTimeDisplay }}
+				</div>
+				<div *ngIf="layoutHeader.language && layoutHeader.language !== 'nothing' && language$ | async as language" class="header-language">
+					<button mat-icon-button [matMenuTriggerFor]="languageMenu">
+						<mat-icon aria-label="Language">language</mat-icon>
+					</button>
+					<div *ngIf="layoutHeader.language === 'key' && language.currentLanguage" class="inbk">{{ language.currentLanguage.id }}</div>
+					<div *ngIf="layoutHeader.language === 'fullname' && language.currentLanguage" class="inbk">{{ language.currentLanguage.name }}</div>
+					<mat-menu #languageMenu [overlapTrigger]="false">
+                        <button mat-menu-item (click)="onSetLanguage(language.default)" style="font-size: 14px;">{{ language.default?.id }} ({{ language.default?.name }})</button>
+                        <button mat-menu-item *ngFor="let languageOption of language.options" (click)="onSetLanguage(languageOption)" style="font-size: 14px;">{{ languageOption.id }} ({{ languageOption.name }})</button>
+                    </mat-menu>
+				</div>
+				<div *ngIf="securityEnabled" class="header-login">
+					<button mat-icon-button (click)="onLogin()">
+						<mat-icon aria-label="Login" [style.color]="isLoggedIn() ? 'rgb(59, 144, 255)' : layoutHeader.fgcolor">account_circle</mat-icon>
+					</button>
+					<div *ngIf="layoutHeader.loginInfo && loggedUser$ | async as user" class="info">
+						<ng-container [ngSwitch]="layoutHeader.loginInfo">
+							<ng-container *ngSwitchCase="'username'">
+								<span class="primary">{{ user?.username }}</span>
+							</ng-container>
+							<ng-container *ngSwitchCase="'fullname'">
+								<span class="primary">{{ user?.fullname }}</span>
+							</ng-container>
+							<ng-container *ngSwitchCase="'both'">
+								<span class="primary">{{ user?.username }}</span>
+								<span class="secondary">{{ user?.fullname }}</span>
+							</ng-container>
+						</ng-container>
+					</div>
+				</div>
+			</div>
+    </div>
     </div>
 
-    <div style="flex: 1; background: #fff; position: relative; overflow: hidden;">
+   <div style="flex: 1; background: #fff; position: relative; overflow: hidden;">
 
-        <div id="container" style="height: 100%; width: 100%; overflow: hidden;" #container (click)="checkToCloseSideNav()">
+    <div style="display: flex; flex-direction: row; height: 100%; width: 100%;">
+
+<app-sidenav #sidenav
+             [sidenav]="matsidenav"
+             (goToPage)="onGoToPage($event)"
+             (goToLink)="onGoToLink($event)">
+</app-sidenav>
+        <div id="container"
+             style="flex: 1; height: 100%; overflow: hidden; position: relative;"
+             #container
+             (click)="checkToCloseSideNav()">
 
             <ng-container *ngIf="!showHomeLink && homeView">
                 <ng-container [ngSwitch]="homeView.type">
@@ -64,8 +147,10 @@
             </div>
         </div>
     </div>
+</div>
 
-    <div style="flex: 0 0 auto; background: #ffffff; color: white; z-index: 10;">
+    <!-- Habilitar si desean que se vea abajo
+    <div style="flex: 0 0 auto; background: #ffffff; color: white; ">
         <mat-tab-group
             style="height: 100%; width: 100%"
             backgroundColor="primary"
@@ -75,6 +160,6 @@
             <mat-tab             style="height: 100%; width: 100%" *ngFor="let view of hmi.views" [label]="view.name">
             </mat-tab>
         </mat-tab-group>
-    </div>
+    </div> -->
 
 </div>

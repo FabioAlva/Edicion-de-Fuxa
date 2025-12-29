@@ -20,4 +20,17 @@
         margin: 0;
         list-style: none;
     }
+    /* Cuando la clase .collapsed se activa en el HTML, esto fuerza el ancho */
+.sidenav-menu.collapsed {
+    width: 60px !important; /* Fuerza el tamaño pequeño */
+
+    /* Centra los iconos */
+    ::ng-deep .mat-list-item-content {
+        justify-content: center !important;
+        padding: 0 !important;
+    }
+
+    /* Oculta barras de scroll si aparecen */
+    overflow-x: hidden;
+}
 }
