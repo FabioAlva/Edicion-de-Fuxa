@@ -1,0 +1,80 @@
+<div style="display: flex; flex-direction: column; height: 100vh; width: 100vw; overflow: hidden;">
+
+    <div style="flex: 0 0 60px; background: #ffffff; z-index: 10;">
+        <div *ngIf="showNavigation" class="header" [style.background-color]="layoutHeader.bkcolor" [style.color]="layoutHeader.fgcolor" style="height: 100%;">
+            <div #header class="items" [style.textAlign]="layoutHeader.itemsAnchor">
+                <ng-container *ngFor="let item of layoutHeader.items; let i = index" [ngSwitch]="item.type">
+                    <ng-container *ngSwitchCase="'button'">
+                        <button mat-raised-button [id]="item.id" [style.background-color]="item.bkcolor" [style.color]="item.fgcolor">
+                            <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon> {{ item.text }}
+                        </button>
+                    </ng-container>
+                </ng-container>
+            </div>
+
+            <div class="header-button">
+                 <div class="alarm-layout" style="min-width: 40px;">
+                    <button mat-icon-button *ngIf="alarms.show" (click)="onAlarmsShowMode('collapse')">
+                        <mat-icon>notifications_none</mat-icon>
+                        <div class="button-counter alarm-color">{{alarms.count}}</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="flex: 1; background: #fff; position: relative; overflow: hidden;">
+
+        <div id="container" style="height: 100%; width: 100%; overflow: hidden;" #container (click)="checkToCloseSideNav()">
+
+            <ng-container *ngIf="!showHomeLink && homeView">
+                <ng-container [ngSwitch]="homeView.type">
+
+                    <ng-container *ngSwitchCase="cardViewType">
+                        <app-cards-view #cardsview [edit]="false" [options]="gridOptions"
+                            [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager" (onGoTo)="onGoToPage($event)">
+                        </app-cards-view>
+                    </ng-container>
+
+                    <ng-container *ngSwitchCase="mapsViewType">
+                        <app-maps-view [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager" (onGoTo)="onGoToPage($event)"></app-maps-view>
+                    </ng-container>
+
+                    <ng-container *ngSwitchDefault>
+                        <app-fuxa-view #fuxaview
+                                       id="home"
+                                       class="home-body"
+                                       style="display: block; width: 100%; height: 100%; overflow: auto;"
+                                       [view]="homeView"
+                                       [hmi]="hmi"
+                                       [gaugesManager]="gaugesManager"
+                                       (ongoto)="onGoToPage($event)">
+                        </app-fuxa-view>
+                    </ng-container>
+
+                </ng-container>
+            </ng-container>
+
+            <ng-container *ngFor="let iframe of iframes">
+                <app-iframe [link]="iframe.link" class="home-body" [style.display]="iframe.hide ? 'none' : 'block'" style="width:100%; height:100%"></app-iframe>
+            </ng-container>
+
+            <div id="alarms-panel" [style.width]="alarmPanelWidth">
+                <app-alarm-view #alarmsview [fullview]="false" (showMode)="onAlarmsShowMode($event)"></app-alarm-view>
+            </div>
+        </div>
+    </div>
+
+    <div style="flex: 0 0 auto; background: #ffffff; color: white; z-index: 10;">
+        <mat-tab-group
+            style="height: 100%; width: 100%"
+            backgroundColor="primary"
+            animationDuration="0ms"
+            [selectedIndex]="currentTabIndex"
+            (selectedTabChange)="onTabChanged($event)">
+            <mat-tab             style="height: 100%; width: 100%" *ngFor="let view of hmi.views" [label]="view.name">
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+
+</div>
