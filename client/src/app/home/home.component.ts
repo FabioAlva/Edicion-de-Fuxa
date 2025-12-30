@@ -89,13 +89,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     language$: Observable<LanguageConfiguration>;
 
 
-
-
-
-
-
     //pruebas
     private bridgeTagId = 't_34be7766-c43a4db9';
+    private bridgeSubscription: Subscription;
 
     constructor(private projectService: ProjectService,
         private changeDetector: ChangeDetectorRef,
@@ -128,7 +124,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
 
-this.hmiService.onVariableChanged.subscribe((event) => {
+this.bridgeSubscription = this.hmiService.onVariableChanged.subscribe((event) => {
 
     // 1. PRIMER FILTRO: ¿Es nuestra variable puente?
     // Imprimimos todo lo que parezca un JSON para ver si el ID coincide
@@ -270,6 +266,9 @@ this.hmiService.onVariableChanged.subscribe((event) => {
             if (this.subscriptiongoTo) {
                 this.subscriptiongoTo.unsubscribe();
             }
+            if (this.bridgeSubscription) {
+            this.bridgeSubscription.unsubscribe();
+               }
             this.destroy$.next(null);
             this.destroy$.complete();
             this.intervalsScript.clearIntervals();
