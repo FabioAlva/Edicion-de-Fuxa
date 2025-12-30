@@ -225,6 +225,7 @@ import { VideoPropertyComponent } from './gauges/controls/html-video/video-prope
 import { InputPropertyComponent } from './gauges/controls/html-input/input-property/input-property.component';
 import { TagPropertyEditMelsecComponent } from './device/tag-property/tag-property-edit-melsec/tag-property-edit-melsec.component';
 import { MyTestModalComponent } from './my-test-modal/my-test-modal.component';
+import { MyConfirmModalComponent } from './my-confirm-modal/my-confirm-modal.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -400,7 +401,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ClientScriptAccessComponent,
         TagPropertyEditWebcamComponent,
         VideoPropertyComponent,
-        MyTestModalComponent
+        MyTestModalComponent,
+        MyConfirmModalComponent
     ],
     imports: [
         BrowserModule,

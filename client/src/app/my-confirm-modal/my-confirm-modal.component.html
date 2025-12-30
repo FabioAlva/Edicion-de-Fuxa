@@ -1,0 +1,10 @@
+<div style="padding: 20px; min-width: 300px; z-index: 9999999;">
+    <h2 style="margin-top:0;">Confirmación</h2>
+    <p>{{ data.mensaje }}</p>
+
+    <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+        <button mat-button (click)="cancelar()">Cancelar</button>
+
+        <button mat-raised-button color="primary" (click)="aceptar()">CONFIRMAR</button>
+    </div>
+</div>

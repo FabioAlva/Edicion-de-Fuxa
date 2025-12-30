@@ -36,6 +36,9 @@ import { ScriptService } from '../_services/script.service';
 import { ToastrService } from 'ngx-toastr';
 import { LanguageService, LanguageConfiguration } from '../_services/language.service';
 import { Language } from '../_models/language';
+import { MyTestModalComponent } from '../my-test-modal/my-test-modal.component';
+import { MyConfirmModalComponent } from '../my-confirm-modal/my-confirm-modal.component';
+//import { MyConfirmModalComponent } from '../my-confirm-modal/my-confirm-modal.component';
 
 @Component({
     selector: 'app-home',    //Aqui en el selector se define primero el nombre del padre o aplicacion que contiene al componente y luego al nombre del componente
@@ -85,6 +88,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     loggedUser$: Observable<User>;
     language$: Observable<LanguageConfiguration>;
 
+
+
+
+
+
+
+    //pruebas
+    private bridgeTagId = 't_34be7766-c43a4db9';
+
     constructor(private projectService: ProjectService,
         private changeDetector: ChangeDetectorRef,
         public dialog: MatDialog,
@@ -102,6 +114,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit() {
         try {
+
             this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(() => {
                 if (this.projectService.getHmi()) {
                     this.loadHmi();
@@ -111,6 +124,84 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             }, error => {
                 console.error(`Error loadHMI: ${error}`);
             });
+
+
+
+
+this.hmiService.onVariableChanged.subscribe((event) => {
+
+    // 1. PRIMER FILTRO: ¿Es nuestra variable puente?
+    // Imprimimos todo lo que parezca un JSON para ver si el ID coincide
+    const val = String(event.value);
+    if (val.includes('{') && val.includes('tipo')) {
+        console.log('👀 VEO UN JSON, ¿ES EL ID CORRECTO?');
+        console.log('   ID que llega del servidor:', event.id);
+        console.log('   ID que espera tu código:', this.bridgeTagId);
+
+        if (event.id !== this.bridgeTagId) {
+            console.error('🚨 ¡ERROR DE ID! El ID cambió. Copia el nuevo ID del servidor.');
+            return;
+        }
+    }
+
+    // 2. TU CÓDIGO ORIGINAL
+    if (event.id === this.bridgeTagId && event.value) {
+        if (!val || val === '') {return;}
+
+        try {
+            const cmd = JSON.parse(val);
+            console.log('✅ JSON Recibido:', cmd); // ¿Qué tiene adentro?
+
+            switch (cmd.tipo) { // <--- Aquí revisamos la propiedad exacta
+                case 'MODAL_INFO':
+                    console.log('➡️ Entrando al case MODAL_INFO');
+                    this.dialog.open(MyTestModalComponent, {
+                        width: '400px',
+                        data: cmd.datos
+                    });
+                    break;
+
+              case 'CONFIRMAR_CAMBIO':
+                    const dialogRef = this.dialog.open(MyConfirmModalComponent, {
+                        width: '350px',
+                        data: { mensaje: cmd.mensaje }
+                    });
+
+        dialogRef.afterClosed().subscribe(aceptado => {
+        if (aceptado) {
+            // 1. Usamos el método nativo para buscar el ID por Nombre
+            // (cmd.idDestino contiene el NOMBRE, ej: "EstadoBomba")
+            const idEncontrado = this.projectService.getTagIdFromName(cmd.idDestino);
+
+            if (idEncontrado) {
+                console.log(`✅ ID Encontrado: ${idEncontrado} | Escribiendo: ${cmd.valor}`);
+
+                // 2. Escribimos el valor
+                this.hmiService.putSignalValue(idEncontrado, String(cmd.valor));
+            } else {
+                console.error(`❌ ERROR: No existe ninguna variable llamada "${cmd.idDestino}" en el proyecto.`);
+            }
+        }
+    });
+                    break;
+
+                default:
+                    console.warn('⚠️ SWITCH FALLÓ. El tipo recibido fue:', cmd.tipo);
+                    console.warn('   Se esperaba: "MODAL_INFO" o "CONFIRMAR_CAMBIO"');
+            }
+
+            // Reset
+            setTimeout(() => {
+                if (this.gaugesManager) {this.gaugesManager.putSignalValue(this.bridgeTagId, '');}
+            }, 500);
+
+        } catch (e) {
+            console.error('❌ JSON Malformado:', e);
+        }
+    }
+});
+
+
             this.subscriptionAlarmsStatus = this.hmiService.onAlarmsStatus.subscribe(event => {
                 this.setAlarmsStatus(event);
             });
@@ -214,10 +305,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             // Convertimos a minúsculas para comparar mejor
             const name = viewName.toLowerCase();
 
-            if (name.includes('inicio') || name.includes('home')) return 'home';
-            if (name.includes('alarma') || name.includes('alarm')) return 'notifications_active';
-            if (name.includes('ajuste') || name.includes('setting')) return 'settings';
-            if (name.includes('tanque')) return 'water_drop';
+            if (name.includes('inicio') || name.includes('home')) {return 'home';}
+            if (name.includes('alarma') || name.includes('alarm')) {return 'notifications_active';}
+            if (name.includes('ajuste') || name.includes('setting')) {return 'settings';}
+            if (name.includes('tanque')) {return 'water_drop';}
 
             // Icono por defecto si no encuentra coincidencia
             return 'grid_view';
@@ -429,8 +520,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 const nameB = b.name.toLowerCase();
 
                 // Si es Home o Inicio, mándalo al principio (-1)
-                if (nameA === 'home' || nameA === 'inicio') return -1;
-                if (nameB === 'home' || nameB === 'inicio') return 1;
+                if (nameA === 'home' || nameA === 'inicio') {return -1;}
+                if (nameB === 'home' || nameB === 'inicio') {return 1;}
                 return 0; // El resto se queda en el orden original de creación
             });
 

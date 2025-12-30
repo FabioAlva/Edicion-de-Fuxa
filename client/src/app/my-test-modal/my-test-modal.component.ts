@@ -5,19 +5,22 @@ import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALO
 @Component({
   selector: 'app-my-test-modal',
   templateUrl: './my-test-modal.component.html',
-  styleUrls: ['./my-test-modal.component.scss']
+  styleUrls: ['./my-test-modal.component.css']
 })
 export class MyTestModalComponent implements OnInit {
 
-  titulo: string = 'Ventana de Prueba';
+titulo: string = 'Título por defecto';
+mensaje: string = 'Mensaje por defecto...';
 
   constructor(
     public dialogRef: MatDialogRef<MyTestModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     // Si recibimos un título al abrir, lo usamos
-    if (data && data.titulo) {
-      this.titulo = data.titulo;
+  if (data) {
+      if (data.titulo) {this.titulo = data.titulo;}
+      // Capturamos el mensaje si viene en el JSON
+      if (data.mensaje) {this.mensaje = data.mensaje;}
     }
   }
 
