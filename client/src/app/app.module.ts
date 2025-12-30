@@ -224,6 +224,7 @@ import { DeviceAdapterService } from './device-adapter/device-adapter.service';
 import { VideoPropertyComponent } from './gauges/controls/html-video/video-property/video-property.component';
 import { InputPropertyComponent } from './gauges/controls/html-input/input-property/input-property.component';
 import { TagPropertyEditMelsecComponent } from './device/tag-property/tag-property-edit-melsec/tag-property-edit-melsec.component';
+import { MyTestModalComponent } from './my-test-modal/my-test-modal.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -398,7 +399,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         LanguageTextListComponent,
         ClientScriptAccessComponent,
         TagPropertyEditWebcamComponent,
-        VideoPropertyComponent
+        VideoPropertyComponent,
+        MyTestModalComponent
     ],
     imports: [
         BrowserModule,

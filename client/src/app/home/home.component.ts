@@ -38,8 +38,8 @@ import { LanguageService, LanguageConfiguration } from '../_services/language.se
 import { Language } from '../_models/language';
 
 @Component({
-    selector: 'app-home',
-    templateUrl: './home.component.html',
+    selector: 'app-home',    //Aqui en el selector se define primero el nombre del padre o aplicacion que contiene al componente y luego al nombre del componente
+    templateUrl: './home.component.html',  // se le envia una estructura html // Una vez hecho esto debemos importarlo en su componente padre , en app-module
     styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -209,6 +209,20 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         });
     }
+
+            getIconForView(viewName: string): string {
+            // Convertimos a minúsculas para comparar mejor
+            const name = viewName.toLowerCase();
+
+            if (name.includes('inicio') || name.includes('home')) return 'home';
+            if (name.includes('alarma') || name.includes('alarm')) return 'notifications_active';
+            if (name.includes('ajuste') || name.includes('setting')) return 'settings';
+            if (name.includes('tanque')) return 'water_drop';
+
+            // Icono por defecto si no encuentra coincidencia
+            return 'grid_view';
+            }
+
 
     onGoToPage(viewId: string, force: boolean = false) {
         if (viewId === this.viewAsAlarms) {
@@ -400,43 +414,42 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
 
-// 3. El método que llama tu botón
-  toggleMenuFromParent() {
-  console.log('1. Click recibido');
-    console.log('2. Valor de this.sidenav:', this.sidenav);
-
-    if (this.sidenav) {
-        this.sidenav.toggleSidenav();
-        this.changeDetector.detectChanges();
-    } else {
-        console.error('ERROR: this.sidenav es undefined. Falta el [sidenav]="..." en el HTML del padre.');
-    }
-
-  }
-
-
-
-
-
-
    private loadHmi() {
         let hmi = this.projectService.getHmi();
+
         if (hmi) {
             this.hmi = hmi;
         }
+
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
             let viewToShow = null;
+            // Para ordenar las vistas , toma de 2 en 2
+            this.hmi.views.sort((a, b) => {
+                const nameA = a.name.toLowerCase();
+                const nameB = b.name.toLowerCase();
+
+                // Si es Home o Inicio, mándalo al principio (-1)
+                if (nameA === 'home' || nameA === 'inicio') return -1;
+                if (nameB === 'home' || nameB === 'inicio') return 1;
+                return 0; // El resto se queda en el orden original de creación
+            });
+
             if (this.hmi.layout?.start) {
                 viewToShow = this.hmi.views.find(x => x.id === this.hmi.layout.start);
             }
+
             if (!viewToShow) {
                 viewToShow = this.hmi.views[0];
             }
+
             let startView = this.hmi.views.find(x => x.name === this.route.snapshot.queryParamMap.get('viewName')?.trim());
+
             if (startView) {
                 viewToShow = startView;
             }
+
             this.homeView = viewToShow;
+
             this.setBackground();
             // check sidenav
             this.showSidenav = null;

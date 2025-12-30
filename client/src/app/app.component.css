@@ -35,6 +35,7 @@
 /* Para editar el boton flotante de home , editor , label */
 .fab-button {
     position: absolute;
+    z-index: 99999;
     bottom: 80px;
     left: 10px;
     color: rgba(255,255,255,1);

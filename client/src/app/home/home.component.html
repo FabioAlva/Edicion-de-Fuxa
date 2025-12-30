@@ -1,11 +1,11 @@
 <div style="display: flex; flex-direction: column; height: 100vh; width: 100vw; overflow: hidden;">
 
-    <div style="flex: 0 0 60px; background: #ffffff;">
+    <div style="flex: 0 0 80px; background: #ffffff;">
         <div *ngIf="showNavigation" class="header" [style.background-color]="layoutHeader.bkcolor" [style.color]="layoutHeader.fgcolor">
 
-                <button (click)="toggleMenuFromParent()" style="background-color: aqua;">
-                    Menu
-                    </button>
+                <!-- <button (click)="toggleMenuFromParent()" style="background-color:transparent; border: transparent;">
+                    <mat-icon>menu</mat-icon>
+                    </button> -->
 
             <div #header class="items" [style.textAlign]="layoutHeader.itemsAnchor">
 				<ng-container *ngFor="let item of layoutHeader.items; let i = index" [ngSwitch]="item.type">
@@ -75,7 +75,7 @@
 				</div>
 				<div *ngIf="securityEnabled" class="header-login">
 					<button mat-icon-button (click)="onLogin()">
-						<mat-icon aria-label="Login" [style.color]="isLoggedIn() ? 'rgb(59, 144, 255)' : layoutHeader.fgcolor">account_circle</mat-icon>
+						<mat-icon aria-label="Login" [style.color]="isLoggedIn() ? 'rgb(255, 255, 255)' : layoutHeader.fgcolor">account_circle</mat-icon>
 					</button>
 					<div *ngIf="layoutHeader.loginInfo && loggedUser$ | async as user" class="info">
 						<ng-container [ngSwitch]="layoutHeader.loginInfo">
@@ -99,12 +99,12 @@
    <div style="flex: 1; background: #fff; position: relative; overflow: hidden;">
 
     <div style="display: flex; flex-direction: row; height: 100%; width: 100%;">
-
+<!--
 <app-sidenav #sidenav
              [sidenav]="matsidenav"
              (goToPage)="onGoToPage($event)"
              (goToLink)="onGoToLink($event)">
-</app-sidenav>
+</app-sidenav> -->
         <div id="container"
              style="flex: 1; height: 100%; overflow: hidden; position: relative;"
              #container
@@ -149,17 +149,19 @@
     </div>
 </div>
 
-    <!-- Habilitar si desean que se vea abajo
-    <div style="flex: 0 0 auto; background: #ffffff; color: white; ">
-        <mat-tab-group
-            style="height: 100%; width: 100%"
-            backgroundColor="primary"
-            animationDuration="0ms"
-            [selectedIndex]="currentTabIndex"
-            (selectedTabChange)="onTabChanged($event)">
-            <mat-tab             style="height: 100%; width: 100%" *ngFor="let view of hmi.views" [label]="view.name">
-            </mat-tab>
-        </mat-tab-group>
-    </div> -->
+    <div style="flex: 0 0 auto; background: #ffffff; color: white; min-height: 70px;justify-items: center; align-items: center;display: flex; ">
+     <div class="nav-buttons-container">
+    <button mat-button
+            *ngFor="let view of hmi.views; let i = index"
+            (click)="onTabChanged({index: i})"
+            class="nav-btn"
+            [class.active]="currentTabIndex === i">
+
+        <mat-icon>{{ getIconForView(view.name) }}</mat-icon>
+
+        <span>{{ view.name }}</span>
+
+    </button>
+</div>
 
 </div>

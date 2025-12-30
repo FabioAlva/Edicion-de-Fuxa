@@ -60,7 +60,8 @@
     .header {
         position: relative;
         display: flex;
-        height: 60px;
+        height: 80px;
+        align-items: center;
         z-index: 9999 !important;
         box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2) !important;
         /* min-height: 46px !important; */
@@ -195,6 +196,7 @@
         box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2),0 2px 6px 0 rgba(0,0,0,0.18);
     }
 
+
     #alarms-panel {
         background: white;
         height: 300px;
@@ -216,4 +218,49 @@
         transition:  top 300ms;
         z-index: 999;
     }
+
+    .nav-buttons-container {
+    display: flex;       /* Pone los botones en fila */
+    flex-wrap: nowrap;   /* Evita que bajen a otra línea */
+    align-items: center; /* Centra verticalmente */
+    height: 100%;        /* Ocupa toda la altura del padre */
+    background-color: #ffffff;
+    gap: 10px;           /* Espacio entre botones */
+    padding: 0 10px;     /* Relleno a los lados */
+    overflow-x: auto;    /* Scroll horizontal si hay muchos botones */
+}
+
+.nav-btn {
+    height: 80%;
+    border: #555 1px solid;
+    color: #555;         /* Color de texto/icono por defecto */
+    min-width: fit-content; /* Se ajusta al ancho del texto */
+    box-shadow: #555 0px 2px;
+    // Estilo cuando el botón es el activo (simulando el tab seleccionado)
+    &.active {
+        background-color: rgba(63, 81, 181, 0.5); /* Fondo suave */
+        color: #3f51b5;
+        font-weight: bold;
+    }
+
+    mat-icon {
+        margin-right: 8px; /* Separación entre icono y texto */
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

@@ -12,6 +12,7 @@ import { UserGroups } from './_models/user';
 import { AppService } from './_services/app.service';
 import { HeartbeatService } from './_services/heartbeat.service';
 
+
 @Component({
 	selector: 'app-root',
 	templateUrl: './app.component.html',
@@ -163,4 +164,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		}
 	}
+
+
 }
